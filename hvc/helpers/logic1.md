@@ -108,3 +108,6 @@ for i in not_null_idx:
 
 return previous_clocks
 ```
+
+Clock comparison can be done by epoch time + counter / counter max to compare two vector clocks where
+    vc.e < vc.f <-> vc.e.j <= vc.f.j and there is a k for which vc.e.k < vc.f.j
