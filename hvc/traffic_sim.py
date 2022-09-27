@@ -1,3 +1,4 @@
+from distutils.log import ERROR
 from hvc import HVC
 from collections import defaultdict
 from copy import copy
@@ -6,7 +7,7 @@ from json import dumps
 from hashlib import md5
 from heapq import heappush, heappop
 from itertools import combinations_with_replacement
-from logging import getLogger, Formatter, StreamHandler, DEBUG, INFO
+from logging import getLogger, Formatter, StreamHandler, DEBUG, INFO, ERROR
 from logging.handlers import RotatingFileHandler
 from math import ceil, log2
 from pathlib import Path
@@ -165,7 +166,7 @@ def main(
         USE_HUB
     )
     log = getLogger('')
-    log.setLevel(INFO)
+    log.setLevel(ERROR)
 
     formatter = Formatter('%(message)s')
 
