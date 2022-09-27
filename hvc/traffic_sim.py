@@ -111,13 +111,12 @@ class TrafficNode:
         while self.incoming:
             time, clock, sender = heappop(self.incoming)
             self.clock.merge(clock, self.phy_clock)
-            self.logger.info("To {} From {} at {}: \nPrev_Clock: {}. \nNow Clock {} \nPhy_Clock: {}".format(
+            self.logger.info("To {} From {} at {}: \nPrev_Clock: {}. \nNow Clock {}".format(
                     self.n,
                     sender,
                     format_time(time / 2**32),
                     clock,
-                    self.clock,
-                    self.phy_clock
+                    self.clock
                 )
             )
             if self.use_hub and self.n == 0 and random() < 0.5:
