@@ -17,7 +17,6 @@ class HVC:
         for idx in range(len(times)):
             self.offsets[idx] = min(self.max_epoch - times[idx], epsilon)
 
-
     def __repr__(self) -> str:
         
         return 'HVC(max_epoch={max_epoch}, \ncounters={counters}, \noffsets={offsets}'.format(
@@ -107,9 +106,9 @@ class HVC:
         elif new_max_epoch == m.max_epoch:
             
             self.offsets = m.offsets
-            self.counters = m.counters
+            self.counters = [0]*self.max_procs
             for idx in range(self.max_procs):
-                pid_time = m.max_epoch - self.offsets[idx]
+                pid_time = self.max_epoch - self.offsets[idx]
                 self.offsets[idx] = min(new_max_epoch - pid_time, self.epsilon)
             self.max_epoch = m.max_epoch
 
