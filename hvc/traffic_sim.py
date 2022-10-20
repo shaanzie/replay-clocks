@@ -16,6 +16,8 @@ from random import choice, randint, random, randrange, uniform, choice
 # from typing import Callable, MutableMapping
 from zipfile import ZipFile, ZIP_DEFLATED
 from zlib import decompress
+import math
+import sys
 
 from copy import deepcopy
 
@@ -58,7 +60,8 @@ class TrafficSimulation:
                 delta_recv=recv_dist(),
                 send_threshold=send_threshold,
                 unit=unit,
-                clock=HVC([0]*n, epsilon, interval, x, n),
+                interval=interval,
+                clock=HVC([epsilon]*n, epsilon, interval, x, n),
                 use_leader=use_leader,
                 use_hub=use_hub
             ) for x in range(n)
@@ -92,6 +95,7 @@ class TrafficNode:
         delta_recv: int,
         clock: HVC,
         unit: int,
+        interval: int,
         send_threshold: float,
         use_leader: bool = False,
         use_hub: bool = False,
@@ -103,6 +107,7 @@ class TrafficNode:
         self.delta_recv = delta_recv
         self.clock = clock
         self.unit = unit
+        self.interval = interval
         self.send_threshold = send_threshold
         self.phy_clock = phy_clock
         self.use_leader = use_leader
@@ -111,6 +116,7 @@ class TrafficNode:
         self.incoming = []  # type: list[tuple[int, ClockWithBits, int]]
         # heap of time to execute, time sent, sender
         self.logger = getLogger("Node {}".format(self.n))
+
 
     def tick(self, threshhold):
         # if random() > threshhold:
@@ -136,12 +142,33 @@ class TrafficNode:
         #             msg_count
         #         )
         #     )
+        # input()
         while self.incoming:
             time, clock, sender = heappop(self.incoming)
             old_clock = self.clock
             self.clock.merge(clock, self.phy_clock)
 
-            self.logger.info("From: {}, To: {}, Time: {}, m.epoch: {}, m.offsets: {}, m.counters: {}, e.epoch: {}, e.offsets: {}, e.counters: {}, f.epoch: {}, f.offsets: {}, f.counters: {}, offset_size: {}, counter_size: {}, epsilon: {}, n: {}, msg_count: {}".format(
+            # self.logger.info("From: {}, To: {}, Time: {}, m.epoch: {}, m.offsets: {}, m.counters: {}, e.epoch: {}, e.offsets: {}, e.counters: {}, f.epoch: {}, f.offsets: {}, f.counters: {}, offset_size: {}, counter_size: {}, epsilon: {}, n: {}, msg_count: {}".format(
+            #         self.n,
+            #         sender,
+            #         format_time(time / 2**32),
+            #         clock.max_epoch,
+            #         '-'.join(str(x) for x in clock.offsets),
+            #         '-'.join(str(x) for x in clock.counters),
+            #         old_clock.max_epoch,
+            #         '-'.join(str(x) for x in old_clock.offsets),
+            #         '-'.join(str(x) for x in old_clock.counters),
+            #         self.clock.max_epoch,
+            #         '-'.join(str(x) for x in self.clock.offsets),
+            #         '-'.join(str(x) for x in self.clock.counters),
+            #         self.clock.get_offset_size(),
+            #         self.clock.get_counter_size(),
+            #         self.clock.epsilon,
+            #         self.num_nodes,
+            #         msg_count
+            #     )
+            # )
+            self.logger.info("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
                     self.n,
                     sender,
                     format_time(time / 2**32),
@@ -158,7 +185,9 @@ class TrafficNode:
                     self.clock.get_counter_size(),
                     self.clock.epsilon,
                     self.num_nodes,
-                    msg_count
+                    msg_count,
+                    self.send_threshold,
+                    self.interval
                 )
             )
             # input()
@@ -214,7 +243,7 @@ def main(
 
     formatter = Formatter('%(message)s')
 
-    file_name = 'LOGFILES/E{}.N{}.B{}.S{}'.format(EPSILON, NUM_NODES, BITS, int(send_threshold * 1000))
+    file_name = 'LOGFILES/E{}.N{}.I{}.S{}'.format(EPSILON, NUM_NODES, INTERVAL, int(send_threshold * 1000))
     if USE_HUB:
         file_name = '.'.join((file_name, 'H'))
     if USE_LEADER:
@@ -274,20 +303,29 @@ def time_prefix(start):
 
 if __name__ == '__main__':
 
+    NUM_NODES = int(sys.argv[1])
+    UNIT = int(sys.argv[2])
+    EPSILON = int(sys.argv[3])
+    INTERVAL = int(sys.argv[4])
+    SEND_THRESHOLD = float(sys.argv[5])
+    XMIT_MIN = int(sys.argv[6])
+    XMIT_MAX = int(sys.argv[7])
+
+
     main(
-    NUM_NODES=8,
-    UNIT=MICROSECOND,
+    NUM_NODES=NUM_NODES,
+    UNIT=UNIT,
     BITS=3,
     SEND_MIN=1,
     SEND_MAX=12,
     RECV_MIN=1,
     RECV_MAX=13,
-    XMIT_MIN=1 * 1000,  # 1 ms
-    XMIT_MAX=20 * 1000,  # 20 ms
-    EPSILON=10 * 1000,  # 1 ms
-    INTERVAL=10 * 1000,
+    XMIT_MIN=XMIT_MIN,  # 1 ms
+    XMIT_MAX=XMIT_MAX,  # 20 ms
+    EPSILON=EPSILON,  # 1 ms
+    INTERVAL=INTERVAL,
     TIME=1000,  # seconds
-    send_threshold=0.0007, # On average, this is messages per clock tick per node
+    send_threshold=SEND_THRESHOLD, # On average, this is messages per clock tick per node
     USE_LEADER=False,
     USE_HUB=False
 )

@@ -6,7 +6,27 @@ class LogParser:
 
     def __init__(self, log_path: str = 'LOGFILES') -> None:
         
-        columns = ['to_node', 'from_node', 'physical_time', 'prev_max_epoch', 'prev_offsets', 'prev_counters', 'new_max_epoch', 'new_offsets', 'new_counters', 'offset_size', 'counter_size', 'epsilon', 'num_nodes']
+        columns = [
+            'from_node',
+            'to_node',
+            'time',
+            'm.epoch',
+            'm.offsets',
+            'm.counters',
+            'e.epoch',
+            'e.offsets',
+            'e.counters',
+            'f.epoch',
+            'f.offsets',
+            'f.counters',
+            'f.offset_size',
+            'f.counter_size',
+            'epsilon',
+            'num_nodes',
+            'msg_count',
+            'send_threshold',
+            'interval'
+        ]
         os.chdir(log_path)
         self.df = pd.DataFrame(columns = columns)
         # iterate through all file
@@ -22,10 +42,12 @@ class LogParser:
                 
     def format_lists(self):
         
-        self.df = self.df['prev_offsets'].str.split(',')
-        self.df = self.df['prev_counters'].str.split(',')
-        self.df = self.df['new_offsets'].str.split(',')
-        self.df = self.df['new_counters'].str.split(',')
+        self.df = self.df['m.offsets'].str.split(',')
+        self.df = self.df['m.counters'].str.split(',')
+        self.df = self.df['e.offsets'].str.split(',')
+        self.df = self.df['e.counters'].str.split(',')
+        self.df = self.df['f.offsets'].str.split(',')
+        self.df = self.df['f.counters'].str.split(',')
     
     def read_text_file(self, file_path):
         with open(file_path, 'r') as f:

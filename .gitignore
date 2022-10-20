@@ -32,3 +32,8 @@
 *.app
 
 *.log
+*.jpg
+*.png
+*.svg
+*.pyc
+*checkpoint*

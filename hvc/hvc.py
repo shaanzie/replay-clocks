@@ -1,13 +1,13 @@
 import datetime as dt
 from math import floor
-
+import random
 
 class HVC: 
 
     def __init__(self, times: list, epsilon: int, epoch_interval: int, pid: int, max_procs: int) -> None:
         
         self.interval = epoch_interval
-        self.max_epoch = floor(max(times) / self.interval)
+        self.max_epoch = 0
         self.times = times
         self.epsilon = epsilon
         self.counters = [0]*max_procs
@@ -15,7 +15,10 @@ class HVC:
         self.pid = pid
         self.max_procs = max_procs
         for idx in range(len(times)):
-            self.offsets[idx] = min(self.max_epoch - times[idx], epsilon)
+            self.offsets[idx] = min(abs(self.max_epoch - times[idx]), epsilon)
+        self.offsets[self.pid] = 0
+
+        self.local_event_probability = 1
 
 
     def __repr__(self) -> str:
@@ -85,7 +88,8 @@ class HVC:
         new_max_epoch = max(self.max_epoch, floor(phy_clock / self.interval))
 
         if(new_max_epoch == self.max_epoch):
-            self.counters[self.pid] += 1
+            if random.random() > self.local_event_probability:
+                self.counters[self.pid] += 1
         
         else:
             self.counters = [0]*self.max_procs
