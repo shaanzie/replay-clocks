@@ -25,7 +25,9 @@ class LogParser:
             'num_nodes',
             'msg_count',
             'send_threshold',
-            'interval'
+            'interval',
+            'delta',
+            'actual_epsilon'
         ]
         os.chdir(log_path)
         self.df = pd.DataFrame(columns = columns)

@@ -31,11 +31,11 @@ class HVC:
 
     def get_offset_size(self) -> str:
 
-        return sum((x > 0) & (abs(x) != self.epsilon) for x in self.offsets)
+        return sum((abs(x) < self.epsilon) for x in self.offsets) - 1
     
     def get_counter_size(self) -> str:
         
-        return sum((x > 0) for x in self.counters)
+        return sum(x > 0 for x in self.counters)
 
     def as_list(self) -> list:
 
