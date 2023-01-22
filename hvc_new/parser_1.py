@@ -7,13 +7,13 @@ from Notebooks.log_parser import LogParser
 parser = LogParser()
 df = parser.df
 
-epsilon = 10000
+epsilon = 10
 interval = 1000
 alpha = 5
 delta = 1000
-# for epsilon in range(5000, 25000, 5000):
+# for epsilon in range(5, 25, 5):
 # for delta in range(1000, 10000, 1000):
-for interval in range(1000, 10000, 1000):
+for interval in range(1000, 11000, 1000):
 # for alpha in range(5, 50, 5):
                 sample_df = df[(df['epsilon'] == epsilon) & (df['delta'] == delta) & (df['interval'] == interval) & (df['alpha'] == alpha)]
                 if len(sample_df.index) == 0:

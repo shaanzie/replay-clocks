@@ -23,7 +23,8 @@ class HVC:
 
     def __repr__(self) -> str:
         
-        return 'HVC(max_epoch={max_epoch}, \ncounters={counters}, \noffsets={offsets}'.format(
+        return 'HVC(clock_pid={pid}, \nmax_epoch={max_epoch}, \ncounters={counters}, \noffsets={offsets}'.format(
+            pid = self.pid,
             max_epoch = self.max_epoch, 
             counters = self.counters, 
             offsets = self.offsets
@@ -84,39 +85,43 @@ class HVC:
         
     def advance(self, phy_clock: int):
         
+        # print('\nAdvancing..')
         # system_epoch = self.find_system_epoch()
         new_max_epoch = max(self.max_epoch, floor(phy_clock / self.interval))
 
         if(new_max_epoch == self.max_epoch):
+            # print('Max epoch matches, advancing counter')
             self.counters[self.pid] += 1
         
         else:
+            # print('Max epoch does not match, resetting counters and offsets')
             self.counters = [0]*self.max_procs
             for idx in range(self.max_procs):
-                pid_time = self.max_epoch - self.offsets[idx]
-                self.offsets[idx] = min(new_max_epoch - pid_time, self.epsilon)
+                if(self.offsets[idx] != self.epsilon):
+                    self.offsets[idx] += floor(min(new_max_epoch - self.max_epoch, self.epsilon))
 
         self.max_epoch = new_max_epoch
         self.offsets[self.pid] = 0
         
     def merge(self, m: 'HVC', phy_clock: int):
 
+        # print('\nMerging clocks')
         # system_epoch = self.find_system_epoch()
         new_max_epoch = max(self.max_epoch, floor(phy_clock / self.interval), m.max_epoch) 
 
         if new_max_epoch == self.max_epoch:
+            # print('Max epoch unchanged, resetting offsets')
             self.counters[self.pid] += 1
+            self.offsets[m.pid] = floor(min(self.max_epoch - m.max_epoch, self.epsilon))
 
         elif new_max_epoch == m.max_epoch:
-            
+            # print('Max epoch changed to message, resetting clock')
             self.offsets = m.offsets
-            self.counters = m.counters
-            for idx in range(self.max_procs):
-                pid_time = m.max_epoch - self.offsets[idx]
-                self.offsets[idx] = min(new_max_epoch - pid_time, self.epsilon)
+            self.counters = [0]*self.max_procs
             self.max_epoch = m.max_epoch
 
         else:
+            # print('System clock changed max epoch, just advancing')
             self.advance(phy_clock=phy_clock)
 
         self.offsets[self.pid] = 0

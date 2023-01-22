@@ -20,8 +20,8 @@ class TrafficNode:
         
         # self.logger = Logger(filename = filename, name = 'TrafficNode{}'.format(node_id)).logger
         self.hvc_clock = HVC(
-            times=[epsilon*unit]*num_nodes, 
-            epsilon=epsilon*unit,
+            times=[epsilon]*num_nodes, 
+            epsilon=epsilon,
             epoch_interval=epoch_interval*unit,
             pid=node_id,
             max_procs=num_nodes
@@ -71,15 +71,20 @@ class TrafficNode:
 
     # Advances clock by 1
     def tick(self, alpha, delta) -> None:
-        
-        self.phy_clock += self.unit
 
         while len(self.receive_queue) > 0 and self.receive_queue[0][0] == self.phy_clock:
 
             sender_pc, sender_hvc = heappop(self.receive_queue)
             recv_hvc = deepcopy(self.hvc_clock)
 
+            # print('*'*80)
+            # print('\nSender: \n', sender_hvc)
+            # print('\nReceiver: \n', recv_hvc)
+
             self.hvc_clock.merge(sender_hvc, self.phy_clock)
+
+            # print('\nUpdated receiver clock: \n', self.hvc_clock)
+            # input()
 
             self.print_log(
                 from_node=sender_hvc.pid,
@@ -90,3 +95,9 @@ class TrafficNode:
                 alpha = alpha,
                 delta = delta
             )
+
+        self.phy_clock += self.unit
+        
+        self.hvc_clock.advance(self.phy_clock)
+
+            

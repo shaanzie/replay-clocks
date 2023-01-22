@@ -106,20 +106,20 @@ class TrafficSimulation:
 
 if __name__ == '__main__':
 
-    # NUM_NODES = int(sys.argv[1])
-    # EPSILON = int(sys.argv[2])
-    # INTERVAL = int(sys.argv[3])
-    # DELTA = int(sys.argv[4])
-    # ALPHA = int(sys.argv[5])
-    # UNIT = int(sys.argv[6])
+    NUM_NODES = int(sys.argv[1])
+    EPSILON = int(sys.argv[2])
+    INTERVAL = int(sys.argv[3])
+    DELTA = int(sys.argv[4])
+    ALPHA = int(sys.argv[5])
+    UNIT = int(sys.argv[6])
 
     # DEBUG
-    NUM_NODES=4
-    EPSILON=10
-    INTERVAL=1
-    ALPHA=5
-    DELTA=1
-    UNIT=1000
+    # NUM_NODES=4
+    # EPSILON=10
+    # INTERVAL=1
+    # ALPHA=5
+    # DELTA=1
+    # UNIT=1000
     
 
     sim = TrafficSimulation(
