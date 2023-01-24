@@ -98,7 +98,7 @@ class HVC:
             self.counters = [0]*self.max_procs
             for idx in range(self.max_procs):
                 if(self.offsets[idx] != self.epsilon):
-                    self.offsets[idx] += floor(min(new_max_epoch - self.max_epoch, self.epsilon))
+                    self.offsets[idx] = min(self.offsets[idx] + new_max_epoch - self.max_epoch, self.epsilon)
 
         self.max_epoch = new_max_epoch
         self.offsets[self.pid] = 0
@@ -109,7 +109,11 @@ class HVC:
         # system_epoch = self.find_system_epoch()
         new_max_epoch = max(self.max_epoch, floor(phy_clock / self.interval), m.max_epoch) 
 
-        if new_max_epoch == self.max_epoch:
+        if new_max_epoch == self.max_epoch and new_max_epoch == m.max_epoch:
+
+            self.counters[self.pid] = max(self.counters[self.pid], m.counters[self.pid]) + 1
+
+        elif new_max_epoch == self.max_epoch:
             # print('Max epoch unchanged, resetting offsets')
             self.counters[self.pid] += 1
             self.offsets[m.pid] = floor(min(self.max_epoch - m.max_epoch, self.epsilon))
@@ -117,7 +121,7 @@ class HVC:
         elif new_max_epoch == m.max_epoch:
             # print('Max epoch changed to message, resetting clock')
             self.offsets = m.offsets
-            self.counters = [0]*self.max_procs
+            self.counters[self.pid] += 1
             self.max_epoch = m.max_epoch
 
         else:
