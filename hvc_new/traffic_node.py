@@ -43,7 +43,7 @@ class TrafficNode:
     ) -> None:
 
         print(
-            '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
+            '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                 from_node,
                 to_node,
                 sender_hvc.max_epoch,
@@ -63,6 +63,7 @@ class TrafficNode:
                 node_hvc.get_counter_size(),
                 max(node_hvc.counters),
                 node_hvc.epsilon,
+                node_hvc.get_perceived_e_drift(),
                 node_hvc.interval,
                 alpha,
                 delta

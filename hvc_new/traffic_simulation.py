@@ -1,6 +1,7 @@
 import sys
 from heapq import heappush
 from random import choice
+import time
 from copy import deepcopy
 
 from traffic_node import TrafficNode
@@ -83,8 +84,8 @@ class TrafficSimulation:
 
         while True:
             
-            min_time = min(node.phy_clock for node in self.nodes)
-            while min_time + self.epsilon > leader.phy_clock:
+            min_time = min(node.hvc_clock.max_epoch for node in self.nodes)
+            while min_time + self.epsilon/self.unit > leader.hvc_clock.max_epoch:
                 leader.tick(self.alpha, self.delta)
 
             for message in range(self.alpha):
@@ -102,6 +103,19 @@ class TrafficSimulation:
                 node.tick(self.alpha, self.delta)
 
             self.run_integrity_check()
+
+    def test_counters_sim(self):
+
+        i = 0
+        while i < 1000000:
+
+            for node in self.nodes:
+                node.tick(self.alpha, self.delta)
+                print(node.hvc_clock)
+                time.sleep(1)
+
+            i += 1
+
 
 
 if __name__ == '__main__':
