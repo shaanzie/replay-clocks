@@ -51,18 +51,18 @@ rm LOGDIR/*
 # done
 
 date=$(date '+%Y-%m-%d')
-sim_type='time_leader'
+sim_type='random_sim'
 
 echo 'epsilon,perceived_epsilon,delta,interval,alpha,max_epoch,max_offset_size,mean_offset_size,percentile90_offset_size,percentile95_offset_size,percentile99_offset_size,max_counter,max_counter_size,mean_counter_size
 ' | tee LOGDIR/run_results_$date-$sim_type.csv
 
-for EPSILON in {2..20..2}
+for EPSILON in {18..20..2}
 do  
-    x=$(( $EPSILON - 1))
+    x=$(( $EPSILON ))
     echo $x
-    for (( DELTA=1; DELTA<$x; DELTA++ ))
+    for (( DELTA=1; DELTA<=$x; DELTA++ ))
     do
-        for (( INTERVAL=1; INTERVAL<$x; INTERVAL++ ))
+        for (( INTERVAL=1; INTERVAL<=$x; INTERVAL++ ))
         do
             for ALPHA in {5..20..5}
             do

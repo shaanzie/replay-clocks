@@ -150,45 +150,51 @@ class HVC:
 
 if __name__ == '__main__':
 
-    clock1 = HVC([10, 10, 10], 10, 10, 0, 3)
-    clock2 = HVC([10, 10, 10], 10, 10, 1, 3)
-    clock3 = HVC([10, 10, 10], 10, 10, 2, 3)
+    # clock1 = HVC([10, 10, 10], 10, 10, 0, 3)
+    # clock2 = HVC([10, 10, 10], 10, 10, 1, 3)
+    # clock3 = HVC([10, 10, 10], 10, 10, 2, 3)
 
     def print_clock(clock: HVC):
 
         print('{clock} for process {pid}'.format(clock = clock, pid = clock.pid))
 
-    clock1.max_epoch = 60
-    clock1.offsets = [0, 2, 3]
-    clock1.counters = [2, 0, 0]
+    # clock1.max_epoch = 60
+    # clock1.offsets = [0, 2, 3]
+    # clock1.counters = [2, 0, 0]
     
-    clock2.max_epoch = 60
-    clock2.offsets = [1, 0, 5]
-    clock2.counters = [1, 2, 0]
+    # clock2.max_epoch = 60
+    # clock2.offsets = [1, 0, 5]
+    # clock2.counters = [1, 2, 0]
 
-    clock1.merge(clock2, 0)
-    print_clock(clock1)
+    # clock1.merge(clock2, 0)
+    # print_clock(clock1)
 
-    clock2.max_epoch = 60
-    clock2.offsets = [1, 0, 5]
-    clock2.counters = [1, 5, 3]
+    # clock2.max_epoch = 60
+    # clock2.offsets = [1, 0, 5]
+    # clock2.counters = [1, 5, 3]
 
-    clock1.merge(clock2, 0)
+    # clock1.merge(clock2, 0)
 
-    print_clock(clock1)
+    # print_clock(clock1)
 
-    clock1.advance(0)
+    # clock1.advance(1)
 
-    print_clock(clock1)
+    # print_clock(clock1)
 
-    clock2.advance(0)
+    # clock2.advance(61)
     
-    print_clock(clock1)
+    # print_clock(clock1)
 
-    clock1.merge(clock2, 0)
+    # clock1.merge(clock2, 0)
     
-    print_clock(clock1)
+    # print_clock(clock1)
 
     # Implement time leader
     # Email Duong for client server setting tests
     # DKBF - designed by Muhammad for Client server tests (Google protocol for marshalling) - thesis
+
+    clock1 = HVC([0, 0], 2, 10, 0, 2)
+    print_clock(clock1)
+
+    clock1.advance(1)
+    print_clock(clock1)
