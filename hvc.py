@@ -123,7 +123,7 @@ class HVC:
         if (new_max_epoch == self.max_epoch):
 
             # If our dictionary holds the counter or not
-            if (self.counters[self.pid]):
+            if(self.pid in self.counters):
                 self.counters[self.pid] += 1
             else:
                 self.counters[self.pid] = 1
@@ -169,13 +169,17 @@ class HVC:
             for key in m.offsets.keys() - self.offsets.keys():
                 self.offsets[key] = m.offsets[key]
 
-            self.counters[self.pid] += 1
+            if(self.pid in self.counters):
+                self.counters[self.pid] += 1
+            else:
+                self.counters[self.pid] = 1
+
             self.offsets[m.pid] = 0
 
         # If the message is lagging
         elif new_max_epoch == self.max_epoch:
 
-            if (self.counters[self.pid]):
+            if(self.pid in self.counters):
                 self.counters[self.pid] += 1
             else:
                 self.counters[self.pid] = 1
@@ -192,7 +196,8 @@ class HVC:
             if msg_offset < self.epsilon:
                 self.offsets[m.pid] = msg_offset
             else:
-                del self.offsets[m.pid]
+                if(m.pid in self.offsets):
+                    del self.offsets[m.pid]
 
         # If the message is leading
         elif new_max_epoch == m.max_epoch:
