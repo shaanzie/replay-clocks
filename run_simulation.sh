@@ -6,7 +6,7 @@ date=(date +'%Y-%m-%d')
 
 echo "EPSILON,INTERVAL,DELTA,ALPHA,OFFSIZE,COUSIZE,EPOCH" | tee data/$date-hvc.csv
 
-for(( EPSILON = 1; EPSILON <= 32; EPSILON *= 2 ))
+for(( EPSILON = 4; EPSILON <= 32; EPSILON *= 2 ))
 do
     for(( INTERVAL = 1; INTERVAL <= EPSILON; INTERVAL *= 2 ))
     do

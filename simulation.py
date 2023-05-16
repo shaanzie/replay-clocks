@@ -55,13 +55,11 @@ def send_message(queue, clock, sys_clock, source, destination):
 
 def simulate_process(queue, clock, sys_clock, process_id):
     while True:
-        if (random.random() > 0.5):
+        if (random.random() > ALPHA):
             # Choose a random destination process to send a message to
             dest = random.choice(range(NUM_PROCESSES))
             # Send the message
             send_message(queue, clock, sys_clock, process_id, dest)
-            # Wait for the specified message rate before sending the next message
-            time.sleep(ALPHA)
         else:
             skews = [1 + random.random() for i in range(NUM_PROCESSES)]
             sys_clock[process_id] += skews[process_id]
@@ -70,17 +68,22 @@ def simulate_process(queue, clock, sys_clock, process_id):
 # Function to get the offsize of the HVC
 
 
-def get_HVC_off_size(clock: hvc.HVC):
+def get_HVC_off_size(clocks: list):
 
-    return len(clock.offsets.keys())
+    max_off = 0
+    for clock in clocks:
+        max_off = max(max_off,  len(clock.offsets.keys()))
+    return max_off
 
 # Function to get the cousize of the HVC
 
 
-def get_HVC_cou_size(clock: hvc.HVC):
+def get_HVC_cou_size(clocks: list):
 
-    return len(clock.counters.keys())
-
+    max_off = 0
+    for clock in clocks:
+        max_off = max(max_off,  len(clock.counters.keys()))
+    return max_off
 
 # Create a message queue for each process
 queues = [multiprocessing.Queue() for _ in range(NUM_PROCESSES)]
@@ -105,4 +108,4 @@ while True:
             sys_clocks[i] += skews[i]
             clocks[i].merge(message, sys_clocks[i])
             print('{EPSILON},{INTERVAL},{DELTA},{ALPHA},{OFFSIZE},{COUSIZE},{EPOCH}'.format(
-                EPSILON=EPSILON, INTERVAL=INTERVAL, DELTA=DELTA, ALPHA=ALPHA, OFFSIZE=get_HVC_off_size(clocks[i]), COUSIZE=get_HVC_cou_size(clocks[i]), EPOCH=clocks[i].max_epoch))
+                EPSILON=EPSILON, INTERVAL=INTERVAL, DELTA=DELTA, ALPHA=ALPHA, OFFSIZE=get_HVC_off_size(clocks), COUSIZE=get_HVC_cou_size(clocks), EPOCH=clocks[i].max_epoch))
