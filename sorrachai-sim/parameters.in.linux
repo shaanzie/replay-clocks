@@ -1,0 +1,7 @@
+delta=200
+epsilon=500
+alpha=0.05
+run_up_to=10000
+number_of_processes=100
+probability_matrix_file=Random
+topology_file=CompleteGraph

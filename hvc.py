@@ -99,7 +99,7 @@ class HVC:
 
         vector_clock = [0]*n_procs
         for pid in range(n_procs):
-            vector_clock[pid] = self.max_epoch + \
+            vector_clock[pid] = (self.max_epoch * self.interval) + \
                 self.offsets[pid] + self.counters[pid]
         return vector_clock
 
@@ -163,6 +163,7 @@ class HVC:
             for key in m.counters.keys() - self.counters.keys():
                 self.counters[key] = m.counters[key]
 
+            # Check this once - should be negative maximum, not positive maximum
             for key in self.offsets.keys() & m.offsets.keys():
                 self.offsets[key] = max(self.offsets[key], m.offsets[key])
 

@@ -1,0 +1,42 @@
+************************************************
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+***********************************************
+** Code written by Sorrachai, edited by Duong *
+***********************************************
+
+Please run 'make' to compile the program.
+
+Set up parameter file first. See example in the given file 'parameters.in.linux'.
+
+To run the program:
+	
+    ./hvc -p=<paramter file> -o=<output file name> -m=<mode 1 or 2>
+	
+  Mode 1:
+ /*
+  * Main simulation: run random unicast model for a long time 
+  * , e.g., 'run_up_to' = 100000, then measure the average HVC size 
+  * for 'absolute_time' between 'epsilon' and 'run_up_to'. 
+  * Repeat this run for each value of 'epsilon' up to 'run_up_to' 
+  */
+  
+  Mode 2:
+  /*
+  * Constrained time ('epsilon' < infinity) vs. unconstrained time model ('epsilon' * -> infinity):
+  * run random unicast model while measuring the average HVC size 
+  * for each 'absolute_time' given 'epsilon'. 
+  */
+ 
+ In mode 2: Matrix_<output file name> is also produced. This file list the current hvc size for each row. This can be used to plot in box-plot in MATLAB.
+ 
+ To plot the result:
+    Run in MATLAB or OCTAVE or your favorite plot program
+    
