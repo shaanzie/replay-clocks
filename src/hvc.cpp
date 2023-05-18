@@ -54,6 +54,10 @@ void HVC::Recv(HVC &m_hvc, int phy_clock_epoch)
     {
         m_hvc.Shift(epoch);
         MergeSameEpoch(m_hvc);
+        for(int i = 0; i < counters.size(); i++)
+        {
+            counters[i] = 0;
+        }
     }
 
     // Message is leading
@@ -61,6 +65,10 @@ void HVC::Recv(HVC &m_hvc, int phy_clock_epoch)
     {
         Shift(m_hvc.epoch);
         MergeSameEpoch(m_hvc);
+        for(int i = 0; i < counters.size(); i++)
+        {
+            counters[i] = 0;
+        }
     }
 }
 
