@@ -31,7 +31,7 @@ void HVC::SendLocal(int phy_clock_epoch)
     }
 }
 
-void HVC::Recv(HVC &m_hvc, int phy_clock_epoch)
+void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
 {
 
     int new_epoch = max(epoch, m_hvc.epoch);
@@ -72,7 +72,7 @@ void HVC::Recv(HVC &m_hvc, int phy_clock_epoch)
     }
 }
 
-void HVC::MergeSameEpoch(HVC &m_hvc)
+void HVC::MergeSameEpoch(HVC m_hvc)
 {
     for (int i = 0; i < offsets.size(); i++)
     {

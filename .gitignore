@@ -36,3 +36,4 @@ data/
 __pycache__/
 *_run
 .vscode/
+debug/*

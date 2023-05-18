@@ -22,11 +22,13 @@ public:
 
     HVC(int someEpsilon, int someInterval, int somePID, int num_procs)
     {
+        epoch = 0;
         epsilon = someEpsilon;
         interval = someInterval;
         pid = somePID;
         offsets = vector<int>(num_procs, epsilon);
         counters = vector<int>(num_procs, 0);
+        offsets[pid] = 0;
     }
 
     // Getters and Setters
@@ -93,6 +95,50 @@ public:
         cout << endl;
     }
 
+    friend std::ostream &operator<<(std::ostream &os, const HVC &obj)
+    {
+        cout << "Epoch: " << obj.epoch << endl;
+        cout << "Offsets: ";
+        for (auto i : obj.offsets)
+        {
+            cout << i << " ";
+        }
+        cout << endl;
+        cout << "Counters: ";
+        for (auto i : obj.counters)
+        {
+            cout << i << " ";
+        }
+        cout << endl;
+        return os;
+    }
+
+    int OffsetSize()
+    {
+        int offsize = 0;
+        for(auto i : offsets)
+        {
+            if(i != epsilon)
+            {
+                offsize++;
+            }
+        }
+        return offsize;
+    }
+
+    int CounterSize()
+    {
+        int cousize = 0;
+        for(auto i : counters)
+        {
+            if(i != 0)
+            {
+                cousize++;
+            }
+        }
+        return cousize;
+    }
+
     bool IsEqual(HVC &f);
 
     bool HappensBefore(HVC &f);
@@ -103,11 +149,11 @@ public:
     void SendLocal(int phy_clock_epoch);
 
     // Recv event (merge clock)
-    void Recv(HVC &m_hvc, int phy_clock_epoch);
+    void Recv(HVC m_hvc, int phy_clock_epoch);
 
     // Shift operation
     void Shift(int phy_clock_epoch);
 
     // Helper
-    void MergeSameEpoch(HVC &m_hvc);
+    void MergeSameEpoch(HVC m_hvc);
 };
