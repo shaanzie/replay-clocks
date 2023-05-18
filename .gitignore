@@ -34,3 +34,5 @@
 .log
 data/
 __pycache__/
+*_run
+.vscode/
