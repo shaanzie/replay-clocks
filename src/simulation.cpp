@@ -20,10 +20,11 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     ofstream out(outFile);
 
     int num_events = 0;
+    int totalOffsetSize = 0;
+    int totalCounterSize = 0;
 
     for (long long sim_time = 0; sim_time <= absolute_time; sim_time++)
     {
-        out << sim_time << ",";
         for (int proc = 0; proc < vp.size(); proc++)
         {
             vp[proc].GetMessages(vp[proc].GetPhyClock());
@@ -41,17 +42,16 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
             vp[proc].Tick();
         }
 
-        int totalOffsetSize = 0;
-        int totalCounterSize = 0;
+        
         for(int proc = 0; proc < vp.size(); proc++)
         {
             totalOffsetSize += vp[proc].GetClock().OffsetSize();
             totalCounterSize += vp[proc].GetClock().CounterSize();
         }
 
-        out << (float)totalOffsetSize / (vp.size() * num_events) << "," << (float)totalCounterSize / (vp.size() * num_events) << endl;
-
     }
+    cout << (float)totalOffsetSize / (vp.size()*num_events) << "," << (float)totalCounterSize / (vp.size()*num_events) << ",";
+    cout << N << "," << E << "," << I << "," << D << "," << A << endl; 
 }
 
 int main(int argc, char* argv[])
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     int epsilon = stoi(argv[2]);
     int interval = stoi(argv[3]);
     int delta = stoi(argv[4]);
-    float alpha = stof(argv[5]);
+    float alpha = stof(argv[5])/100;
     long long int absolute_time = stol(argv[6]);
     string debug = argv[7];
     string out = argv[8];
