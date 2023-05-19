@@ -151,7 +151,7 @@ public:
 
         epoch = 40;
         offsets = {0, 0, 0, 0, 2};
-        counters = {1, 0, 1, 1, 1};
+        counters = {0, 0, 0, 0, 0};
 
         f.SetEpoch(epoch);
         f.SetOffsets(offsets);
@@ -196,6 +196,50 @@ public:
         epoch = 40;
         offsets = {0, 1, 0, 0, 6};
         counters = {0, 0, 0, 0, 0};
+
+        f.SetEpoch(epoch);
+        f.SetOffsets(offsets);
+        f.SetCounters(counters);
+
+        bool equal = e.IsEqual(f);
+        if (!equal)
+        {
+            cout << endl
+                    << "Equality failed!";
+            cout << endl
+                 << "e: " << endl;
+            e.printClock();
+            cout << endl
+                 << "f: " << endl;
+            f.printClock();
+            cout << endl;
+        }
+        return equal;
+    }
+
+    bool TestMergeLaggingEps()
+    {
+        int epoch = 40;
+        vector<int> offsets = {0, 1, 0, 0, 1};
+        vector<int> counters = {0, 0, 0, 0, 1};
+
+        e.SetEpoch(epoch);
+        e.SetOffsets(offsets);
+        e.SetCounters(counters);
+
+        epoch = 35;
+        offsets = {1, 0, 2, 0, 1};
+        counters = {0, 0, 1, 0, 1};
+
+        m.SetEpoch(epoch);
+        m.SetOffsets(offsets);
+        m.SetCounters(counters);
+
+        e.Recv(m, 40);
+
+        epoch = 40;
+        offsets = {0, 1, 0, 0, 1};
+        counters = {1, 0, 1, 0, 1};
 
         f.SetEpoch(epoch);
         f.SetOffsets(offsets);
@@ -282,7 +326,7 @@ public:
         e.Recv(m, 45);
 
         epoch = 45;
-        offsets = {0, 5, 5, 5, 5};
+        offsets = {5, 5, 5, 5, 5};
         counters = {0, 0, 0, 0, 0};
 
         f.SetEpoch(epoch);
@@ -316,6 +360,7 @@ int main()
     cout << "Test result for Advance in diff epoch which is epsilon away: " << t.TestAdvanceDiffEpochEps() << endl;
     cout << "Test result for Merge in same epoch: " << t.TestMergeSameEpoch() << endl;
     cout << "Test result for Merge in lagging epoch: " << t.TestMergeLagging() << endl;
+    cout << "Test result for Merge in lagging epoch by eps: " << t.TestMergeLaggingEps() << endl;
     cout << "Test result for Merge in leading epoch: " << t.TestMergeLeading() << endl;
     cout << "Test result for Merge in Advanced epoch: " << t.TestMergeAdvance() << endl;
     return 0;

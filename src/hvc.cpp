@@ -27,7 +27,7 @@ void HVC::SendLocal(int phy_clock_epoch)
             counters[i] = 0;
         }
         Shift(phy_clock_epoch);
-        offsets[pid] = 0;
+        offsets[pid] = min(new_epoch - phy_clock_epoch, epsilon);
     }
 }
 
@@ -37,39 +37,58 @@ void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
     int new_epoch = max(epoch, m_hvc.epoch);
     new_epoch = max(new_epoch, phy_clock_epoch);
 
-    // If physical clock leads the clocks recieved
-    if (new_epoch == phy_clock_epoch && phy_clock_epoch != m_hvc.epoch && phy_clock_epoch != epoch)
-    {
-        SendLocal(phy_clock_epoch);
-    }
+    vector<int> offset_copy = offsets;
+    vector<int> counter_copy = counters;
 
-    // Both message and self are in the same epoch
-    if (m_hvc.epoch == epoch)
-    {
-        MergeSameEpoch(m_hvc);
-    }
+    Shift(new_epoch);
+    m_hvc.Shift(new_epoch);
+    MergeSameEpoch(m_hvc);
 
-    // Message is lagging
-    else if (new_epoch == epoch)
+    if((offset_copy == offsets) || (offset_copy == m_hvc.offsets))
     {
-        m_hvc.Shift(epoch);
-        MergeSameEpoch(m_hvc);
+        counters[pid]++;
+    }
+    else
+    {
         for(int i = 0; i < counters.size(); i++)
         {
             counters[i] = 0;
         }
     }
 
-    // Message is leading
-    else if (new_epoch == m_hvc.epoch)
-    {
-        Shift(m_hvc.epoch);
-        MergeSameEpoch(m_hvc);
-        for(int i = 0; i < counters.size(); i++)
-        {
-            counters[i] = 0;
-        }
-    }
+    // // If physical clock leads the clocks recieved
+    // if (new_epoch == phy_clock_epoch && phy_clock_epoch != m_hvc.epoch && phy_clock_epoch != epoch)
+    // {
+    //     SendLocal(phy_clock_epoch);
+    // }
+
+    // // Both message and self are in the same epoch
+    // if (m_hvc.epoch == epoch)
+    // {
+    //     MergeSameEpoch(m_hvc);
+    // }
+
+    // // Message is lagging
+    // else if (new_epoch == epoch)
+    // {
+    //     m_hvc.Shift(epoch);
+    //     MergeSameEpoch(m_hvc);
+    //     for(int i = 0; i < counters.size(); i++)
+    //     {
+    //         counters[i] = 0;
+    //     }
+    // }
+
+    // // Message is leading
+    // else if (new_epoch == m_hvc.epoch)
+    // {
+    //     Shift(m_hvc.epoch);
+    //     MergeSameEpoch(m_hvc);
+    //     for(int i = 0; i < counters.size(); i++)
+    //     {
+    //         counters[i] = 0;
+    //     }
+    // }
 }
 
 void HVC::MergeSameEpoch(HVC m_hvc)
@@ -82,7 +101,6 @@ void HVC::MergeSameEpoch(HVC m_hvc)
     {
         counters[i] = max(counters[i], m_hvc.counters[i]);
     }
-    counters[pid]++;
 }
 
 bool HVC::IsEqual(HVC &f)

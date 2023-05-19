@@ -20,9 +20,9 @@ OUT=debug/out-$date.csv
 
 touch $DEBUG
 touch $OUT
-echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha" >> $OUT
+echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha"
 
-for(( epsilon = 1; epsilon<=150; epsilon*=2 ))
+for(( epsilon = 1; epsilon<=300; epsilon*=2 ))
 do
     for(( interval = 1; interval <= $epsilon; interval *= 2 ))
     do

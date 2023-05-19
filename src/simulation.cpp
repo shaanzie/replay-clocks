@@ -31,7 +31,7 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
             
             vp[proc].ProcessMessages();
 
-            if (alphagen(gen) / 100 <= A * 100)
+            if (alphagen(gen) <= A * 100)
             {
                 int random_proc = procgen(gen);
                 Message m = vp[proc].CreateMessage(sim_time + deltagen(gen), "");
