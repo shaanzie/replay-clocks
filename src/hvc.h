@@ -20,6 +20,9 @@ public:
 
     HVC() {}
 
+    // Copy constructor
+    HVC(const HVC& other) : epsilon(other.epsilon), interval(other.interval), pid(other.pid), epoch(other.epoch), offsets(other.offsets), counters(other.counters) {}
+
     HVC(int someEpsilon, int someInterval, int somePID, int num_procs)
     {
         epoch = 0;

@@ -239,7 +239,7 @@ public:
 
         epoch = 40;
         offsets = {0, 1, 0, 0, 1};
-        counters = {1, 0, 1, 0, 1};
+        counters = {1, 0, 0, 0, 0};
 
         f.SetEpoch(epoch);
         f.SetOffsets(offsets);
