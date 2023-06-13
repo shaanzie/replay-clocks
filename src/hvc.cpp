@@ -15,9 +15,18 @@ void HVC::Shift(int new_epoch)
 void HVC::SendLocal(int phy_clock_epoch)
 {
     int new_epoch = max(epoch, phy_clock_epoch);
-    if (new_epoch == epoch)
+    int new_offset = new_epoch - phy_clock_epoch;
+    if (new_epoch == epoch && offsets[pid] <= new_offset)
     {
         counters[pid]++;
+    }
+    else if(new_epoch == epoch)
+    {
+        offsets[pid] = min(new_offset, offsets[pid]);
+        for(int i = 0; i < counters.size(); i++)
+        {
+            counters[i] = 0;
+        }
     }
     else
     {
@@ -26,40 +35,56 @@ void HVC::SendLocal(int phy_clock_epoch)
         {
             counters[i] = 0;
         }
-        Shift(phy_clock_epoch);
-        offsets[pid] = min(new_epoch - phy_clock_epoch, epsilon);
+        Shift(new_epoch);
+        offsets[pid] = min(new_offset, epsilon);
     }
 }
 
 void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
 {
 
+    // cout << "--------------------------------------------------------------------------------------------" << endl;
+    // cout << "Recv op" << endl;
+    // cout << "Process: " << *this << endl;
+    // cout << "Message: " << m_hvc << endl;
+    
+
     int new_epoch = max(epoch, m_hvc.epoch);
     new_epoch = max(new_epoch, phy_clock_epoch);
+
+    // cout << "New epoch " << new_epoch << endl;
 
     HVC a = *this;
     HVC b = m_hvc;
 
     a.Shift(new_epoch);
+
+    // cout << "A shifted: " << a << endl;
+
     b.Shift(new_epoch);
+
+    // cout << "B shifted: " << b << endl;
+
     a.MergeSameEpoch(b);
 
+    // cout << "A merged: " << a << endl;
 
-    if((epoch == a.epoch && offsets == a.offsets) && (m_hvc.epoch = a.epoch && m_hvc.offsets == a.offsets))
-    {
-        for (int i = 0; i < a.counters.size(); i++)
-        {
-            a.counters[i] = max(a.counters[i], b.counters[i]);
-        }
-        a.counters[pid]++;
-    }
 
-    else if((epoch == a.epoch && offsets == a.offsets) || (m_hvc.epoch = a.epoch && m_hvc.offsets == a.offsets))
+    if(EqualOffset(a) && m_hvc.EqualOffset(a))
     {
         for(int i = 0; i < a.counters.size(); i++)
         {
-            a.counters[i] = 0;
+            a.counters[i] = max(a.counters[i], m_hvc.counters[i]);
         }
+        a.counters[pid]++;
+    }
+    else if(EqualOffset(a) && !m_hvc.EqualOffset(a))
+    {
+        a.counters[pid]++;
+    }
+    else if(!EqualOffset(a) && m_hvc.EqualOffset(a))
+    {
+        a.counters = m_hvc.counters;
         a.counters[pid]++;
     }
     else
@@ -72,39 +97,9 @@ void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
 
     *this = a;
 
-    // // If physical clock leads the clocks recieved
-    // if (new_epoch == phy_clock_epoch && phy_clock_epoch != m_hvc.epoch && phy_clock_epoch != epoch)
-    // {
-    //     SendLocal(phy_clock_epoch);
-    // }
+    // cout << "Final: " << *this << endl;
+    // cout << "--------------------------------------------------------------------------------------------" << endl;
 
-    // // Both message and self are in the same epoch
-    // if (m_hvc.epoch == epoch)
-    // {
-    //     MergeSameEpoch(m_hvc);
-    // }
-
-    // // Message is lagging
-    // else if (new_epoch == epoch)
-    // {
-    //     m_hvc.Shift(epoch);
-    //     MergeSameEpoch(m_hvc);
-    //     for(int i = 0; i < counters.size(); i++)
-    //     {
-    //         counters[i] = 0;
-    //     }
-    // }
-
-    // // Message is leading
-    // else if (new_epoch == m_hvc.epoch)
-    // {
-    //     Shift(m_hvc.epoch);
-    //     MergeSameEpoch(m_hvc);
-    //     for(int i = 0; i < counters.size(); i++)
-    //     {
-    //         counters[i] = 0;
-    //     }
-    // }
 }
 
 void HVC::MergeSameEpoch(HVC m_hvc)
@@ -113,6 +108,15 @@ void HVC::MergeSameEpoch(HVC m_hvc)
     {
         offsets[i] = min(offsets[i], m_hvc.offsets[i]);
     }
+}
+
+bool HVC::EqualOffset(HVC a)
+{
+    if(a.epoch != epoch || a.offsets != offsets)
+    {
+        return false;
+    }
+    return true;
 }
 
 bool HVC::IsEqual(HVC &f)
@@ -177,4 +181,10 @@ bool HVC::HappensBefore(HVC &f)
         }
     }
     return result;
+}
+
+void HVC::Tick(int someEpoch)
+{
+    Shift(someEpoch);
+    offsets[pid] = 0;
 }

@@ -17,30 +17,37 @@ Message Process::CreateMessage(int recv_time, string body)
 }
 void Process::PushMsg(Message m)
 {
-    msg_queue.push(m);
+    msg_queue.push_back(m);
+    sort(msg_queue.begin(), msg_queue.end(), CompareByRecvTimes);
+    // PrintMessages(msg_queue);
 }
-void Process::GetMessages(int phy_clock)
-{
 
-    while (!msg_queue.empty() && msg_queue.front().GetRecvTime() <= phy_clock)
+void Process::PrintMessages(vector<Message> msg_queue)
+{
+    
+    cout << "########################### " << "Process " << pid << "'s message queue at epoch " << CalculateEpoch(phy_clock) << " and time " << phy_clock << " #########################################" << endl;
+    for(auto i : msg_queue)
     {
-        Message front = msg_queue.front();
-        if (front.GetRecvTime() <= phy_clock)
-        {
-            msg_queue.pop();
-            proc_queue.push_back(front);
-        }
+        cout << "--------------------------------------------------------------------------------------------------------------------------------" << endl;
+        cout << i << endl;
     }
-    sort(proc_queue.begin(), proc_queue.end(), CompareByRecvTimes);
-}   
+    cout << "#############################################################################################################" << endl;
+}
 
 void Process::ProcessMessages()
 {
-    for(int i = 0; i < proc_queue.size(); i++)
+
+    // cout << "Messages for process " << pid << " at pt " << phy_clock << endl;
+    // PrintMessages(msg_queue);
+
+    for(int i = 0; i < msg_queue.size(); i++)
     {
-        hvc_clock.Recv(proc_queue[i].GetMsgClock(), CalculateEpoch(phy_clock));
+        if(msg_queue[i].GetRecvTime() <= phy_clock)
+        {
+            hvc_clock.Recv(msg_queue[i].GetMsgClock(), CalculateEpoch(phy_clock));
+            msg_queue.erase(msg_queue.begin() + i);
+        }
     }
-    proc_queue.clear();
 }
 
 int Process::CalculateEpoch(int phy_clock)

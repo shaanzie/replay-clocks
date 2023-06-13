@@ -9,10 +9,9 @@ class Process
 {
 private:
     HVC hvc_clock;
-    queue<Message> msg_queue;
-    vector<Message> proc_queue;
+    vector<Message> msg_queue;
     int pid;
-    int phy_clock;
+    float phy_clock;
     int interval;
 
 public:
@@ -21,8 +20,9 @@ public:
     {
         pid = somePid;
         hvc_clock = HVC(epsilon, someInterval, pid, num_procs);
+        hvc_clock.SetEpoch(epsilon);
         interval = someInterval;
-        phy_clock = 0;
+        phy_clock = epsilon*interval;
     }
     HVC GetClock()
     {
@@ -40,7 +40,12 @@ public:
     void Tick()
     {
         phy_clock++;
-        hvc_clock.Shift(CalculateEpoch(phy_clock));
+        // hvc_clock.Tick(CalculateEpoch(phy_clock));
+    }
+
+    void Send()
+    {
+        hvc_clock.SendLocal(CalculateEpoch(phy_clock));
     }
 
     int CalculateEpoch(int phy_clock);
@@ -52,5 +57,7 @@ public:
     void GetMessages(int phy_clock);
 
     void ProcessMessages();
+
+    void PrintMessages(vector<Message> msg_queue);
     
 };

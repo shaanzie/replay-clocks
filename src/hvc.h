@@ -20,19 +20,48 @@ public:
 
     HVC() {}
 
-    // Copy constructor
-    HVC(const HVC& other) : epsilon(other.epsilon), interval(other.interval), pid(other.pid), epoch(other.epoch), offsets(other.offsets), counters(other.counters) {}
-
     HVC(int someEpsilon, int someInterval, int somePID, int num_procs)
     {
         epoch = 0;
         epsilon = someEpsilon;
         interval = someInterval;
         pid = somePID;
-        offsets = vector<int>(num_procs, epsilon);
         counters = vector<int>(num_procs, 0);
+        offsets = vector<int>(num_procs);
         offsets[pid] = 0;
+        for (int i = 0; i < num_procs; ++i) {
+            offsets[i] = (i == pid) ? 0 : epsilon;
+        }
     }
+
+    // Copy constructor (deep copy)
+    HVC(const HVC &other)
+    {
+        epoch = other.epoch;
+        epsilon = other.epsilon;
+        interval = other.interval;
+        pid = other.pid;
+        offsets = std::vector<int>(other.offsets.begin(), other.offsets.end());
+        counters = std::vector<int>(other.counters.begin(), other.counters.end());
+
+    }
+
+    // Assignment operator (deep copy)
+    HVC &operator=(const HVC &other)
+    {
+        if (this != &other)
+        {
+            epoch = other.epoch;
+            epsilon = other.epsilon;
+            interval = other.interval;
+            pid = other.pid;
+            offsets = std::vector<int>(other.offsets.begin(), other.offsets.end());
+            counters = std::vector<int>(other.counters.begin(), other.counters.end());
+
+        }
+        return *this;
+    }
+
 
     // Getters and Setters
 
@@ -83,6 +112,7 @@ public:
 
     void printClock()
     {
+        cout << "Process: " << pid << endl;
         cout << "Epoch: " << epoch << endl;
         cout << "Offsets: ";
         for (auto i : offsets)
@@ -100,6 +130,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const HVC &obj)
     {
+        cout << "Process: " << obj.pid << endl;
         cout << "Epoch: " << obj.epoch << endl;
         cout << "Offsets: ";
         for (auto i : obj.offsets)
@@ -119,9 +150,9 @@ public:
     int OffsetSize()
     {
         int offsize = 0;
-        for(auto i : offsets)
+        for (auto i : offsets)
         {
-            if(i != epsilon)
+            if (i != epsilon)
             {
                 offsize++;
             }
@@ -132,9 +163,9 @@ public:
     int CounterSize()
     {
         int cousize = 0;
-        for(auto i : counters)
+        for (auto i : counters)
         {
-            if(i != 0)
+            if (i != 0)
             {
                 cousize++;
             }
@@ -159,4 +190,8 @@ public:
 
     // Helper
     void MergeSameEpoch(HVC m_hvc);
+
+    bool EqualOffset(HVC a);
+
+    void Tick(int someEpoch);
 };

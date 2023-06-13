@@ -3,9 +3,20 @@
 #include <random>
 #include <chrono>
 #include <thread>
+#include <climits>
 #include "simulation.h"
 
 using namespace std;
+
+int GetMinEpoch(vector<Process>& vp)
+{
+    int min_epoch = INT_MAX;
+    for(int proc = 0; proc < vp.size(); proc++)
+    {
+        min_epoch = min(vp[proc].GetClock().GetEpoch(), min_epoch);
+    }
+    return min_epoch;
+}
 
 void Simulation::RandomUnicast(long long int absolute_time, string debugFile, string outFile)
 {
@@ -14,44 +25,67 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     std::uniform_int_distribution<int> procgen(0, vp.size() - 1);
 
     std::uniform_int_distribution<int> alphagen(0, 100);
-    std::uniform_int_distribution<int> deltagen(0, D);
+    std::uniform_int_distribution<int> advancegen(0, 100);
 
-    ofstream debug(debugFile);
-    ofstream out(outFile);
+    long long int num_events = 0;
+    long long int totalOffsetSize = 0;
+    long long int totalCounterSize = 0;
 
-    int num_events = 0;
-    int totalOffsetSize = 0;
-    int totalCounterSize = 0;
-
-    for (long long sim_time = 0; sim_time <= absolute_time; sim_time++)
+    for (int sim_time = E*I; sim_time <= absolute_time; sim_time++)
     {
+
+        // cout << sim_time << endl;
         for (int proc = 0; proc < vp.size(); proc++)
-        {
-            vp[proc].GetMessages(vp[proc].GetPhyClock());
-            
+        {   
             vp[proc].ProcessMessages();
 
-            if (alphagen(gen) <= A * 100)
+            // if(proc == 0)
+            // {
+            //     cout << vp[proc].GetClock() << endl;
+            // }
+
+            if(vp[proc].GetClock().GetEpoch() - GetMinEpoch(vp) >= E)
             {
+                continue;
+            }
+
+            if (alphagen(gen) < A * 100)
+            {
+
                 int random_proc = procgen(gen);
-                Message m = vp[proc].CreateMessage(sim_time + deltagen(gen), "");
+                while(random_proc == proc)
+                {
+                    random_proc = procgen(gen);
+                }
+                // vp[proc].Send();
+                Message m = vp[proc].CreateMessage(vp[random_proc].GetPhyClock() + D, "");
                 vp[random_proc].PushMsg(m);
-                num_events ++;
+
+                num_events++;
             }
 
             vp[proc].Tick();
+            // this_thread::sleep_for(std::chrono::seconds(1));
+
         }
 
-        
+        int offsize = 0;
         for(int proc = 0; proc < vp.size(); proc++)
         {
             totalOffsetSize += vp[proc].GetClock().OffsetSize();
             totalCounterSize += vp[proc].GetClock().CounterSize();
-        }
 
+            offsize += vp[proc].GetClock().OffsetSize();
+        }  
+        // cout << offsize << " ";
+        // if(offsize == 0)
+        // {
+        //     exit(0);
+        // }
     }
-    cout << (float)totalOffsetSize / (vp.size()*num_events) << "," << (float)totalCounterSize / (vp.size()*num_events) << ",";
-    cout << N << "," << E << "," << I << "," << D << "," << A << endl; 
+    num_events++;
+    cout << (float)totalOffsetSize / (num_events*vp.size()) << "," << (float)totalCounterSize / (num_events*vp.size()) << ",";
+    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << endl; 
 }
 
 int main(int argc, char* argv[])
