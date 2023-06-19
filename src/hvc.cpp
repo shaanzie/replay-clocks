@@ -14,6 +14,11 @@ void HVC::Shift(int new_epoch)
 
 void HVC::SendLocal(int phy_clock_epoch)
 {
+
+    // printClock();
+
+    // cout << "After send: " << endl;
+
     int new_epoch = max(epoch, phy_clock_epoch);
     int new_offset = new_epoch - phy_clock_epoch;
     if (new_epoch == epoch && offsets[pid] <= new_offset)
@@ -38,6 +43,9 @@ void HVC::SendLocal(int phy_clock_epoch)
         Shift(new_epoch);
         offsets[pid] = min(new_offset, epsilon);
     }
+
+    // printClock();
+    // cout << endl;   
 }
 
 void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
