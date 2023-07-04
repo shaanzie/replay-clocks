@@ -20,7 +20,7 @@ OUT=debug/out-$date.csv
 
 touch $DEBUG
 touch $OUT
-echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,offsetscount,counterscount"
+echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,offsetscount,counterscount,maxOffset,maxCounter"
 
 # for(( epsilon = 100; epsilon <= 600; epsilon += 50 ))
 # do
@@ -52,9 +52,9 @@ for(( epsilon = 100; epsilon <= 600; epsilon += 50 ))
 do
     for(( interval = 2; interval <= $epsilon; interval *= 2 ))
     do
-        for(( delta = 2; delta <= $epsilon; delta *= 2 ))
+        for(( delta = $interval / 2; delta <= $epsilon; delta *= 2 ))
         do
-            for(( alpha = 25; alpha <= 100; alpha *= 2 ))
+            for(( alpha = 1; alpha <= 128; alpha *= 2 ))
             do
                 ./hvc_run $number_of_processes $epsilon $interval $delta $alpha $run_up_to $DEBUG $OUT
                 sleep 2

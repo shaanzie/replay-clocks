@@ -3,6 +3,7 @@
 #include <random>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 #include <climits>
 #include "simulation.h"
 
@@ -29,7 +30,9 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
 
     long long int num_events = 0;
     long long int totalOffsetSize = 0;
-    long long int totalCounterSize = 0;
+    long long int totalCounterSize = 0;        
+    int maxOffset = 0;
+    int maxCounter = 0;
 
     for (int sim_time = E * I; sim_time <= E * I + absolute_time; sim_time++)
     {
@@ -57,27 +60,46 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
                     random_proc = procgen(gen);
                 }
                 vp[proc].Send();
-                Message m = vp[proc].CreateMessage(vp[random_proc].GetPhyClock() + (D*I), "");
+                Message m = vp[proc].CreateMessage(vp[random_proc].GetPhyClock() + (D), "");
                 vp[random_proc].PushMsg(m);
 
                 num_events++;
             }
 
-            if (advancegen(gen) < 50)
-            {
-                vp[proc].Tick();
-            }
+            // if (advancegen(gen) < 50)
+            // {
+            vp[proc].Tick();
+            // }
 
             // this_thread::sleep_for(std::chrono::seconds(1));
         }
 
         int offsize = 0;
+
         for (int proc = 0; proc < vp.size(); proc++)
         {
             totalOffsetSize += vp[proc].GetClock().OffsetSize();
             totalCounterSize += vp[proc].GetClock().CounterSize();
 
             offsize += vp[proc].GetClock().OffsetSize();
+
+            vector<int> offs = vp[proc].GetClock().GetOffsets();
+            vector<int> counts = vp[proc].GetClock().GetCounters();
+            
+            int maxoff = 0;
+            for(int i = 0; i < offs.size(); i++)
+            {
+                if(offs[i] != E)
+                {
+                    maxoff = max(maxoff, offs[i]);
+                }
+            }
+            maxOffset = max(maxoff, maxOffset);
+
+            int maxcount = *max_element(counts.begin(), counts.end());
+
+            maxOffset = max(maxOffset, maxoff);
+            maxCounter = max(maxcount, maxCounter);
 
             // cout << "Process " << proc << endl << vp[proc].GetClock() << "Physical Clock: " << vp[proc].GetPhyClock() << endl << "Offsize: " << vp[proc].GetClock().OffsetSize() << endl << endl;
             // this_thread::sleep_for(std::chrono::seconds(1));
@@ -90,7 +112,7 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     }
     num_events++;
     cout << (float)totalOffsetSize / (absolute_time * vp.size()) << "," << (float)totalCounterSize / (absolute_time * vp.size()) << ",";
-    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << endl;
+    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << "," << maxOffset << "," << maxCounter << endl;
 }
 
 int main(int argc, char *argv[])
