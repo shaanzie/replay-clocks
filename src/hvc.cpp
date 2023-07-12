@@ -21,6 +21,7 @@ void HVC::SendLocal(int phy_clock_epoch)
 
     int new_epoch = max(epoch, phy_clock_epoch);
     int new_offset = new_epoch - phy_clock_epoch;
+    // Make sure this case does not happen
     if (new_epoch == epoch && offsets[pid] <= new_offset)
     {
         counters[pid]++;
@@ -41,7 +42,7 @@ void HVC::SendLocal(int phy_clock_epoch)
             counters[i] = 0;
         }
         Shift(new_epoch);
-        offsets[pid] = min(new_offset, epsilon);
+        offsets[pid] = min(new_offset, epsilon); // Is this always 0
     }
 
     // printClock();

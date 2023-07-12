@@ -34,6 +34,10 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     int maxOffset = 0;
     int maxCounter = 0;
 
+    // Check sorrachai's paper for similar results
+    // Collect information on: if we don't store epoch, what is the error rate in causality
+    // How many events had all counters to be 0
+
     for (int sim_time = E * I; sim_time <= E * I + absolute_time; sim_time++)
     {
 
