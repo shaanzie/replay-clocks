@@ -25,7 +25,7 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> procgen(0, vp.size() - 1);
 
-    std::uniform_int_distribution<int> alphagen(0, 100);
+    std::uniform_real_distribution<float> alphagen(0.0, 100.0);
     std::uniform_int_distribution<int> advancegen(0, 100);
 
     long long int num_events = 0;
@@ -54,9 +54,11 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
             {
                 continue;
             }
+            
+            float rand = alphagen(gen);
 
-            if (alphagen(gen) < A * 100)
-            {
+            if (rand < A * 100)
+            { 
 
                 int random_proc = procgen(gen);
                 while (random_proc == proc)
@@ -125,7 +127,7 @@ int main(int argc, char *argv[])
     int epsilon = stoi(argv[2]);
     int interval = stoi(argv[3]);
     int delta = stoi(argv[4]);
-    float alpha = stof(argv[5]) / 100;
+    float alpha = stof(argv[5]) / 1000;
     long long int absolute_time = stol(argv[6]);
     string debug = argv[7];
     string out = argv[8];
