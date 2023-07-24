@@ -31,4 +31,15 @@
 *.out
 *.app
 
-.log
+*.log
+*.jpg
+*.png
+*.svg
+*.pyc
+*checkpoint*
+
+debug/
+data/
+Notebooks/
+*.csv
+.vscode/
