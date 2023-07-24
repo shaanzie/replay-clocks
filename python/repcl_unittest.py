@@ -1,17 +1,17 @@
-import hvc
+from repcl import REPCL
 import unittest
 
 
-class TestHVC(unittest.TestCase):
+class TestREPCL(unittest.TestCase):
 
     interval = 10
     epsilon = 20
-    e = hvc.HVC(
+    e = REPCL.REPCL(
         interval=interval,
         pid=0,
         epsilon=epsilon
     )
-    f = hvc.HVC(
+    f = REPCL.REPCL(
         interval=interval,
         pid=1,
         epsilon=epsilon

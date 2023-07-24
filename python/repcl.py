@@ -8,13 +8,13 @@ Version checking recommended
 import math
 
 '''
-The HVC (Hybrid Vector Clock) is a vector clock
+The REPCL (Hybrid Vector Clock) is a vector clock
 that enforces causality in O(number of processes
 not skewed past epsilon) space. It is an improvement
 on the previous implementation of vector clocks and
 uses a process' physical timestamp to enforce causality.
 
-Note: The happens before relation for this HVC is defined as
+Note: The happens before relation for this REPCL is defined as
 e hb f -> for all offsets e.o in e.offsets and all offsets f.o in f.offsets,
 e.o <= f.o and
 there is one e.o such that e.o < f.o for the same PID
@@ -28,7 +28,7 @@ this as a single class for now.
 '''
 
 
-class HVC:
+class REPCL:
 
     '''
     Initializes the clock parameters of epsilon, interval, offsets, counters and process ID.
@@ -60,7 +60,7 @@ class HVC:
 
     def __repr__(self) -> str:
 
-        return 'HVC(clock_pid={pid}, \nmax_epoch={max_epoch}, \ncounters={counters}, \noffsets={offsets}'.format(
+        return 'REPCL(clock_pid={pid}, \nmax_epoch={max_epoch}, \ncounters={counters}, \noffsets={offsets}'.format(
             pid=self.pid,
             max_epoch=self.max_epoch,
             counters=self.counters,
@@ -145,7 +145,7 @@ class HVC:
     This is when we hear a new message from a process in the system
     '''
 
-    def merge(self, m: 'HVC', phy_clock: int):
+    def merge(self, m: 'REPCL', phy_clock: int):
 
         # Check if the new max epoch has changed by discretizing our clock to fit the interval chosen and comparing the clock from m
         new_max_epoch = max(

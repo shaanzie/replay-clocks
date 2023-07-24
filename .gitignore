@@ -38,5 +38,8 @@
 *.pyc
 *checkpoint*
 
-hvc_new/data/*
+debug/
+data/
+Notebooks/
 *.csv
+.vscode/
