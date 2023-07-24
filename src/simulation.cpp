@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     int epsilon = stoi(argv[2]);
     int interval = stoi(argv[3]);
     int delta = stoi(argv[4]);
-    float alpha = stof(argv[5]) / 1000;
+    float alpha = stof(argv[5]) / 10000;
     long long int absolute_time = stol(argv[6]);
     string debug = argv[7];
     string out = argv[8];
