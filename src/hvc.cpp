@@ -1,10 +1,22 @@
 #include <vector>
+#include<iostream>
 #include "hvc.h"
 
 using namespace std;
 
+void one_pos(int num){
+    int n = num;
+    while(n>0){
+        int pos = (~(n ^ (~(n - 1))) + 1) >> 1;
+        std::cout << pos << std::endl;
+        n = n & (n-1);
+    }
+}
+
+
 void HVC::Shift(int new_epoch)
 {
+    
     for (int i = 0; i < offsets.size(); i++)
     {
         offsets[i] = min(new_epoch - (epoch - offsets[i]), epsilon);

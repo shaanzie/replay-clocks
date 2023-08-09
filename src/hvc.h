@@ -11,6 +11,8 @@ class HVC
 private:
     int pid;
     int epoch;
+    int offset_bitmap;
+    int counter_bitmap;
     vector<int> offsets;
     vector<int> counters;
 
@@ -26,6 +28,11 @@ public:
         epsilon = someEpsilon;
         interval = someInterval;
         pid = somePID;
+        
+        offset_bitmap = 0;
+        int bitmask = 1 << pid;
+        offset_bitmap = offset_bitmap | bitmask;
+
         counters = vector<int>(num_procs, 0);
         offsets = vector<int>(num_procs);
         offsets[pid] = 0;
