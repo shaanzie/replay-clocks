@@ -1,27 +1,43 @@
 #include <vector>
-#include<iostream>
+#include <iostream>
+#include <math.h>
 #include "hvc.h"
 
 using namespace std;
 
-void one_pos(int num){
-    int n = num;
-    while(n>0){
-        int pos = (~(n ^ (~(n - 1))) + 1) >> 1;
-        std::cout << pos << std::endl;
-        n = n & (n-1);
-    }
-}
-
 
 void HVC::Shift(int new_epoch)
 {
-    
-    for (int i = 0; i < offsets.size(); i++)
+    int bitmap = offset_bitmap;
+    while(bitmap > 0)
     {
-        offsets[i] = min(new_epoch - (epoch - offsets[i]), epsilon);
+        int pos = log2((~(bitmap ^ (~(bitmap - 1))) + 1) >> 1);
+        // cout << pos << endl;
+        offsets[pos] = min(new_epoch - (epoch - offsets[pos]), epsilon);
+        if(offsets[pos] >= epsilon)
+        {
+            offset_bitmap = offset_bitmap & ~(1 << pos); 
+        }
+        bitmap = bitmap & (bitmap - 1);
     }
     epoch = new_epoch;
+}
+
+void HVC::MergeSameEpoch(HVC m_hvc)
+{
+    
+    offset_bitmap = offset_bitmap | m_hvc.offset_bitmap;
+    int bitmap = offset_bitmap;
+    while(bitmap > 0)
+    {
+        int pos = log2((~(bitmap ^ (~(bitmap - 1))) + 1) >> 1);
+        offsets[pos] = min(offsets[pos], m_hvc.offsets[pos]);
+        if(offsets[pos] >= epsilon)
+        {
+            offset_bitmap = offset_bitmap & ~(1 << pos); 
+        }
+        bitmap = bitmap & (bitmap - 1);
+    }
 }
 
 void HVC::SendLocal(int phy_clock_epoch)
@@ -123,13 +139,7 @@ void HVC::Recv(HVC m_hvc, int phy_clock_epoch)
 
 }
 
-void HVC::MergeSameEpoch(HVC m_hvc)
-{
-    for (int i = 0; i < offsets.size(); i++)
-    {
-        offsets[i] = min(offsets[i], m_hvc.offsets[i]);
-    }
-}
+
 
 bool HVC::EqualOffset(HVC a)
 {

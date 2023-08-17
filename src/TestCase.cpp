@@ -26,7 +26,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 5};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -62,10 +64,13 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 5};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
+        
 
         e.SendLocal(45);
 
@@ -98,6 +103,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 5};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 0 | 0b11111;
+
+        e.SetBitmap(bitmap);
 
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
@@ -134,7 +142,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {5, 6, 7, 8, 9};
         vector<int> counters = {1, 2, 3, 4, 5};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -170,7 +180,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {5, 6, 7, 8, 9};
         vector<int> counters = {1, 2, 3, 4, 5};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -206,7 +218,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {5, 6, 7, 8, 9};
         vector<int> counters = {1, 2, 3, 4, 5};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -242,7 +256,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 5};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 31;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -250,7 +266,9 @@ public:
         epoch = 40;
         offsets = {5, 0, 7, 1, 2};
         counters = {0, 0, 1, 0, 1};
+        bitmap = 31;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);
@@ -286,7 +304,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 8};
         vector<int> counters = {0, 0, 0, 0, 1};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -294,7 +314,9 @@ public:
         epoch = 35;
         offsets = {1, 0, 2, 0, 1};
         counters = {0, 0, 1, 0, 1};
+        bitmap = 0 | 0b11111;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);
@@ -330,7 +352,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 1};
         vector<int> counters = {0, 0, 0, 0, 1};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -338,7 +362,9 @@ public:
         epoch = 35;
         offsets = {1, 0, 2, 0, 1};
         counters = {0, 0, 1, 0, 1};
+        bitmap = 0 | 0b11111;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);
@@ -374,7 +400,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 7};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -382,7 +410,9 @@ public:
         epoch = 45;
         offsets = {7, 0, 1, 2, 0};
         counters = {1, 0, 1, 0, 0};
+        bitmap = 0 | 0b11111;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);
@@ -418,7 +448,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {0, 1, 0, 0, 7};
         vector<int> counters = {0, 0, 0, 1, 0};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -426,7 +458,9 @@ public:
         epoch = 40;
         offsets = {7, 0, 1, 2, 0};
         counters = {1, 0, 1, 0, 0};
+        bitmap = 0 | 0b11111;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);
@@ -462,7 +496,9 @@ public:
         int epoch = 40;
         vector<int> offsets = {5, 6, 7, 8, 9};
         vector<int> counters = {0, 1, 0, 0, 1};
+        int bitmap = 0 | 0b11111;
 
+        e.SetBitmap(bitmap);
         e.SetEpoch(epoch);
         e.SetOffsets(offsets);
         e.SetCounters(counters);
@@ -470,7 +506,9 @@ public:
         epoch = 45;
         offsets = {1, 2, 13, 4, 5};
         counters = {1, 0, 1, 0, 0};
+        bitmap = 0 | 0b11111;
 
+        m.SetBitmap(bitmap);
         m.SetEpoch(epoch);
         m.SetOffsets(offsets);
         m.SetCounters(counters);

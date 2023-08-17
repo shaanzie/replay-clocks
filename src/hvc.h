@@ -48,6 +48,8 @@ public:
         epsilon = other.epsilon;
         interval = other.interval;
         pid = other.pid;
+        offset_bitmap = other.offset_bitmap;
+        counter_bitmap = other.counter_bitmap;
         offsets = std::vector<int>(other.offsets.begin(), other.offsets.end());
         counters = std::vector<int>(other.counters.begin(), other.counters.end());
 
@@ -62,6 +64,8 @@ public:
             epsilon = other.epsilon;
             interval = other.interval;
             pid = other.pid;
+            offset_bitmap = other.offset_bitmap;
+            counter_bitmap = other.counter_bitmap;
             offsets = std::vector<int>(other.offsets.begin(), other.offsets.end());
             counters = std::vector<int>(other.counters.begin(), other.counters.end());
 
@@ -115,6 +119,11 @@ public:
     void SetCounters(vector<int> &someCounters)
     {
         counters = someCounters;
+    }
+
+    void SetBitmap(int bitmap)
+    {
+        offset_bitmap = bitmap;
     }
 
     void printClock()
