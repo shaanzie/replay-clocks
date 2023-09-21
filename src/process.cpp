@@ -1,5 +1,6 @@
 #include <vector>
 #include <queue>
+#include <chrono>
 #include <algorithm>
 #include "process.h"
 
@@ -34,20 +35,33 @@ void Process::PrintMessages(vector<Message> msg_queue)
     cout << "#############################################################################################################" << endl;
 }
 
-void Process::ProcessMessages()
+float Process::ProcessMessages()
 {
 
     // cout << "Messages for process " << pid << " at pt " << phy_clock << endl;
     // PrintMessages(msg_queue);
+    int msg_queue_size = msg_queue.size() + 1;
+    float recv_time = 0;
 
     for(int i = 0; i < msg_queue.size(); i++)
     {
         if(msg_queue[i].GetRecvTime() <= phy_clock)
         {
+            
+            auto start = chrono::high_resolution_clock::now();
+
             hvc_clock.Recv(msg_queue[i].GetMsgClock(), CalculateEpoch(phy_clock));
+
+            auto stop = chrono::high_resolution_clock::now();
+            auto recv_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+
+            recv_time += recv_duration.count();
+
             msg_queue.erase(msg_queue.begin() + i);
         }
     }
+
+    return recv_time / msg_queue_size;
 }
 
 int Process::CalculateEpoch(int phy_clock)

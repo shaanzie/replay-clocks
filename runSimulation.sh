@@ -23,7 +23,7 @@ OUT=debug/out-$date.csv
 
 touch $DEBUG
 touch $OUT
-echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,offsetscount,counterscount,maxOffset,maxCounter" | tee -a $OUT
+echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,offsetscount,counterscount,maxOffset,maxCounter,avg_send_time,avg_recv_time,system_clock_time" | tee -a $OUT
 
 for(( epsilon = 100; epsilon <= 1000; epsilon += 50 ))
 do

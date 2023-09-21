@@ -33,6 +33,8 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     long long int totalCounterSize = 0;        
     int maxOffset = 0;
     int maxCounter = 0;
+    double avg_time_for_send = 0;
+    double avg_time_for_recv = 0;
 
     // Check sorrachai's paper for similar results
     // Collect information on: if we don't store epoch, what is the error rate in causality
@@ -43,7 +45,7 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
 
         for (int proc = 0; proc < vp.size(); proc++)
         {
-            vp[proc].ProcessMessages();
+            avg_time_for_recv += vp[proc].ProcessMessages();
 
             // if(proc == 0)
             // {
@@ -65,7 +67,17 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
                 {
                     random_proc = procgen(gen);
                 }
+
+                auto start = chrono::high_resolution_clock::now();
+
                 vp[proc].Send();
+
+                auto stop = chrono::high_resolution_clock::now();
+                auto send_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+
+                avg_time_for_send += send_duration.count();
+                
+
                 Message m = vp[proc].CreateMessage(vp[random_proc].GetPhyClock() + (D), "");
                 vp[random_proc].PushMsg(m);
 
@@ -116,9 +128,20 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
         //     exit(0);
         // }
     }
+
+    // Measure system time get
+
+    auto start = chrono::high_resolution_clock::now();
+
+    auto test = chrono::high_resolution_clock::now();
+
+    auto stop = chrono::high_resolution_clock::now();
+    auto test_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+
     num_events++;
     cout << (float)totalOffsetSize / (absolute_time * vp.size()) << "," << (float)totalCounterSize / (absolute_time * vp.size()) << ",";
-    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << "," << maxOffset << "," << maxCounter << endl;
+    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << "," << maxOffset << "," << maxCounter << ",";
+    cout << avg_time_for_send / num_events << "," << avg_time_for_recv / num_events << "," << test_duration.count() << endl;
 }
 
 int main(int argc, char *argv[])

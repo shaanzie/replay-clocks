@@ -56,7 +56,7 @@ public:
 
     void GetMessages(int phy_clock);
 
-    void ProcessMessages();
+    float ProcessMessages();
 
     void PrintMessages(vector<Message> msg_queue);
     
