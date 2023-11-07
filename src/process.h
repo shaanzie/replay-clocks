@@ -8,7 +8,7 @@ using namespace std;
 class Process
 {
 private:
-    HVC hvc_clock;
+    RC rc_clock;
     vector<Message> msg_queue;
     int pid;
     float phy_clock;
@@ -19,14 +19,14 @@ public:
     Process(int somePid, int epsilon, int someInterval, int num_procs)
     {
         pid = somePid;
-        hvc_clock = HVC(epsilon, someInterval, pid, num_procs);
-        hvc_clock.SetEpoch(epsilon);
+        rc_clock = RC(pid, num_procs);
+        rc_clock.SetHLC(epsilon);
         interval = someInterval;
         phy_clock = epsilon*interval;
     }
-    HVC GetClock()
+    RC GetClock()
     {
-        return hvc_clock;
+        return rc_clock;
     }
     int GetPID()
     {
@@ -40,12 +40,12 @@ public:
     void Tick()
     {
         phy_clock++;
-        // hvc_clock.Tick(CalculateEpoch(phy_clock));
+        // RC_clock.Tick(CalculateEpoch(phy_clock));
     }
 
     void Send()
     {
-        hvc_clock.SendLocal(CalculateEpoch(phy_clock));
+        rc_clock.SendLocal(CalculateEpoch(phy_clock));
     }
 
     int CalculateEpoch(int phy_clock);
@@ -56,7 +56,7 @@ public:
 
     void GetMessages(int phy_clock);
 
-    void ProcessMessages();
+    float ProcessMessages();
 
     void PrintMessages(vector<Message> msg_queue);
     

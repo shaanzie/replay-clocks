@@ -14,12 +14,12 @@ int GetMinEpoch(vector<Process> &vp)
     int min_epoch = INT_MAX;
     for (int proc = 0; proc < vp.size(); proc++)
     {
-        min_epoch = min(vp[proc].GetClock().GetEpoch(), min_epoch);
+        min_epoch = min(vp[proc].GetClock().GetHLC(), min_epoch);
     }
     return min_epoch;
 }
 
-void Simulation::RandomUnicast(long long int absolute_time, string debugFile, string outFile)
+void Simulation::RandomUnicast()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -33,24 +33,26 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
     long long int totalCounterSize = 0;        
     int maxOffset = 0;
     int maxCounter = 0;
+    double avg_time_for_send = 0;
+    double avg_time_for_recv = 0;
 
     // Check sorrachai's paper for similar results
     // Collect information on: if we don't store epoch, what is the error rate in causality
     // How many events had all counters to be 0
 
-    for (int sim_time = E * I; sim_time <= E * I + absolute_time; sim_time++)
+    for (int sim_time = E * I; sim_time <= E * I + 100000; sim_time++)
     {
 
         for (int proc = 0; proc < vp.size(); proc++)
         {
-            vp[proc].ProcessMessages();
+            avg_time_for_recv += vp[proc].ProcessMessages();
 
             // if(proc == 0)
             // {
             //     cout << vp[proc].GetClock() << endl;
             // }
 
-            if (vp[proc].GetClock().GetEpoch() - GetMinEpoch(vp) >= E)
+            if (vp[proc].GetClock().GetHLC() - GetMinEpoch(vp) >= E)
             {
                 continue;
             }
@@ -65,7 +67,17 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
                 {
                     random_proc = procgen(gen);
                 }
+
+                auto start = chrono::high_resolution_clock::now();
+
                 vp[proc].Send();
+
+                auto stop = chrono::high_resolution_clock::now();
+                auto send_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+
+                avg_time_for_send += send_duration.count();
+                
+
                 Message m = vp[proc].CreateMessage(vp[random_proc].GetPhyClock() + (D), "");
                 vp[random_proc].PushMsg(m);
 
@@ -89,23 +101,23 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
 
             offsize += vp[proc].GetClock().OffsetSize();
 
-            vector<int> offs = vp[proc].GetClock().GetOffsets();
-            vector<int> counts = vp[proc].GetClock().GetCounters();
+            // vector<int> offs = vp[proc].GetClock().GetOffsets();
+            // vector<int> counts = vp[proc].GetClock().GetCounters();
             
-            int maxoff = 0;
-            for(int i = 0; i < offs.size(); i++)
-            {
-                if(offs[i] != E)
-                {
-                    maxoff = max(maxoff, offs[i]);
-                }
-            }
-            maxOffset = max(maxoff, maxOffset);
+            // int maxoff = 0;
+            // for(int i = 0; i < offs.size(); i++)
+            // {
+            //     if(offs[i] != E)
+            //     {
+            //         maxoff = max(maxoff, offs[i]);
+            //     }
+            // }
+            // maxOffset = max(maxoff, maxOffset);
 
-            int maxcount = *max_element(counts.begin(), counts.end());
+            // int maxcount = *max_element(counts.begin(), counts.end());
 
-            maxOffset = max(maxOffset, maxoff);
-            maxCounter = max(maxcount, maxCounter);
+            // maxOffset = max(maxOffset, maxoff);
+            // maxCounter = max(maxcount, maxCounter);
 
             // cout << "Process " << proc << endl << vp[proc].GetClock() << "Physical Clock: " << vp[proc].GetPhyClock() << endl << "Offsize: " << vp[proc].GetClock().OffsetSize() << endl << endl;
             // this_thread::sleep_for(std::chrono::seconds(1));
@@ -116,9 +128,20 @@ void Simulation::RandomUnicast(long long int absolute_time, string debugFile, st
         //     exit(0);
         // }
     }
+
+    // Measure system time get
+
+    auto start = chrono::high_resolution_clock::now();
+
+    auto test = chrono::high_resolution_clock::now();
+
+    auto stop = chrono::high_resolution_clock::now();
+    auto test_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+
     num_events++;
-    cout << (float)totalOffsetSize / (absolute_time * vp.size()) << "," << (float)totalCounterSize / (absolute_time * vp.size()) << ",";
-    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," << totalOffsetSize << "," << totalCounterSize << "," << maxOffset << "," << maxCounter << endl;
+    cout << (float)totalOffsetSize / (100000 * vp.size()) << "," << (float)totalCounterSize / (100000 * vp.size()) << ",";
+    cout << N << "," << E << "," << I << "," << D << "," << A << "," << num_events << "," ;
+    cout << avg_time_for_send / num_events << "," << avg_time_for_recv / num_events << "," << test_duration.count() << endl;
 }
 
 int main(int argc, char *argv[])
@@ -128,12 +151,9 @@ int main(int argc, char *argv[])
     int interval = stoi(argv[3]);
     int delta = stoi(argv[4]);
     float alpha = stof(argv[5]) / 10000;
-    long long int absolute_time = stol(argv[6]);
-    string debug = argv[7];
-    string out = argv[8];
 
     Simulation s = Simulation(num_procs, epsilon, interval, delta, alpha);
-    s.RandomUnicast(absolute_time, debug, out);
+    s.RandomUnicast();
 
     return 0;
 }

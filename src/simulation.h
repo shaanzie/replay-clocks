@@ -36,6 +36,6 @@ public:
         return time;
     }
 
-    void RandomUnicast(long long int absolute_time, string debug, string out);
+    void RandomUnicast();
 
 };
