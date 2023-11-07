@@ -26,9 +26,9 @@ FLAGS= -std=c++17 -g
 SRC_DIR=src/
 TEST_FILES= rc.cpp TestCaseRC.cpp
 TEST_FILES_FULL=$(addprefix $(SRC_DIR), $(TEST_FILES))
-SRC_FILES= rc.cpp TestCaseRC.cpp
+SRC_FILES= rc.cpp process.cpp simulation.cpp
 SRC_FILES_FULL=$(addprefix $(SRC_DIR), $(SRC_FILES))
-HDR_FILES= rc.h config.h
+HDR_FILES= rc.h message.h process.h simulation.h config.h
 HDR_FILES_FULL=$(addprefix $(SRC_DIR), $(HDR_FILES))
 
 all: rc_run rc_test

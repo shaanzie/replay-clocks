@@ -221,3 +221,18 @@ void RC::PrintClock()
     }
     cout << endl << "Counters: " << counters << endl;
 }
+
+int RC::OffsetSize()
+{
+    return sizeof(offset_bitmap) + sizeof(offsets);
+}
+
+int RC::CounterSize()
+{
+    return sizeof(counters);
+}
+
+int RC::ClockSize()
+{
+    return OffsetSize() + CounterSize() + sizeof(hlc);
+}

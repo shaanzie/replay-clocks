@@ -1,5 +1,7 @@
 #!/bin/bash
 
+bash runTests.sh
+
 clear
 
 for(( num_procs = 32; num_procs <= 64; num_procs += 32 ))
@@ -23,31 +25,14 @@ do
                         echo "-----------------------------------------------------------------------------------------------"
                         echo "BUILD SUCCESS"
                         echo "-----------------------------------------------------------------------------------------------"
-                        
-                        echo "-----------------------------------------------------------------------------------------------"
-                        echo "RUNNING TESTS"
-                        echo "-----------------------------------------------------------------------------------------------"
-
-                        # ./hvc_test_run
-
-                        if [ $? -ne 0 ]; then
-                            echo "-----------------------------------------------------------------------------------------------"
-                            echo "TESTS FAILED!"
-                            echo "-----------------------------------------------------------------------------------------------"
-                            exit 1  # Exit the script with a non-zero status code
-                        else
-                            echo "-----------------------------------------------------------------------------------------------"
-                            echo "TESTS SUCCEEDED!"
-                            echo "-----------------------------------------------------------------------------------------------"
-                        fi
 
                         echo "-----------------------------------------------------------------------------------------------"
                         echo "RUNNING SIMULATION"
                         echo "-----------------------------------------------------------------------------------------------"
 
-                        echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,offsetscount,counterscount,maxOffset,maxCounter,avg_send_time,avg_recv_time,system_clock_time"
+                        echo "offsize,cousize,num_procs,epsilon,interval,delta,alpha,num_events,avg_send_time,avg_recv_time,system_clock_time"
 
-                        # ./hvc_run $num_procs $epsilon $interval $delta $alpha
+                        ./rc_run $num_procs $epsilon $interval $delta $alpha
 
                         if [ $? -ne 0 ]; then
                             echo "-----------------------------------------------------------------------------------------------"

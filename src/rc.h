@@ -178,4 +178,10 @@ public:
 
     void PrintClock();
 
+    int OffsetSize();
+
+    int CounterSize();
+
+    int ClockSize();
+
 };

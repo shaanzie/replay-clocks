@@ -13,7 +13,7 @@ bool CompareByRecvTimes(Message a, Message b)
 
 Message Process::CreateMessage(int recv_time, string body)
 {
-    Message m = Message(recv_time, hvc_clock, body);
+    Message m = Message(recv_time, rc_clock, body);
     return m;
 }
 void Process::PushMsg(Message m)
@@ -21,18 +21,6 @@ void Process::PushMsg(Message m)
     msg_queue.push_back(m);
     sort(msg_queue.begin(), msg_queue.end(), CompareByRecvTimes);
     // PrintMessages(msg_queue);
-}
-
-void Process::PrintMessages(vector<Message> msg_queue)
-{
-    
-    cout << "########################### " << "Process " << pid << "'s message queue at epoch " << CalculateEpoch(phy_clock) << " and time " << phy_clock << " #########################################" << endl;
-    for(auto i : msg_queue)
-    {
-        cout << "--------------------------------------------------------------------------------------------------------------------------------" << endl;
-        cout << i << endl;
-    }
-    cout << "#############################################################################################################" << endl;
 }
 
 float Process::ProcessMessages()
@@ -50,7 +38,7 @@ float Process::ProcessMessages()
             
             auto start = chrono::high_resolution_clock::now();
 
-            hvc_clock.Recv(msg_queue[i].GetMsgClock(), CalculateEpoch(phy_clock));
+            rc_clock.Recv(msg_queue[i].GetMsgClock(), CalculateEpoch(phy_clock));
 
             auto stop = chrono::high_resolution_clock::now();
             auto recv_duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);

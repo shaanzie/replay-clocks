@@ -1,3 +1,7 @@
+############################################               
+            # SIMULATION
+############################################
+
 rm config.h src/config.h
 
 NUM_PROCS=$1
@@ -27,6 +31,3 @@ echo "config.h generated successfully."
 
 make clean
 make
-
-date=$(date +%Y-%m-%d)
-
