@@ -2,7 +2,7 @@
             # SIMULATION
 ############################################
 
-rm config.h src/config.h
+rm config.h src/config.h 2> /dev/null
 
 NUM_PROCS=$1
 EPSILON=$2
@@ -27,7 +27,7 @@ echo "#endif" >> config.h
 
 mv config.h src/
 
-echo "config.h generated successfully."
+# echo "config.h generated successfully."
 
-make clean
-make
+make -s clean 2> /dev/null
+make -s 2> /dev/null

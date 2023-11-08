@@ -201,30 +201,12 @@ void RC::PrintClock()
     cout << "HLC: " << hlc << endl;
     cout << "Offset bitmap: " << offset_bitmap << endl;
     cout << "Offsets in binary: " << offsets << endl;
-    cout << "Offsets: " << endl;
-
-    int index = 0;
-    int bitmap = offset_bitmap.to_ulong();
-    while(bitmap > 0)
-    {
-
-        int offset_at_index = GetOffsetAtIndex(index);
-
-        int pos = log2((~(bitmap ^ (~(bitmap - 1))) + 1) >> 1);
-
-        cout << pos << ":" << offset_at_index << ",";
-        
-        bitmap = bitmap & (bitmap - 1);
-
-        index ++; 
-
-    }
     cout << endl << "Counters: " << counters << endl;
 }
 
 int RC::OffsetSize()
 {
-    return sizeof(offset_bitmap) + sizeof(offsets);
+    return (offset_bitmap.count()*MAX_OFFSET_BITS)/8;
 }
 
 int RC::CounterSize()
