@@ -31,9 +31,22 @@
 *.out
 *.app
 
+
 .log
 data/
 __pycache__/
 *_run
 .vscode/
 debug/*
+*.log
+*.jpg
+*.png
+*.svg
+*.pyc
+*checkpoint*
+
+debug/
+data/
+Notebooks/
+*.csv
+.vscode/
